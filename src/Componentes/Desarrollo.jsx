@@ -1,6 +1,6 @@
 import React from 'react'
 import {nanoid} from 'nanoid'
-import {firebase} from '../firebase'
+import {firebase} from './firebase'
 
 const Desarrollo = () => {
   const [Titulo, setTitulo] = React.useState('')
@@ -14,29 +14,8 @@ const Desarrollo = () => {
   const [cambioNombre, setcambioNombre] = React.useState()
   const [error, setError] = React.useState()
 
-  React.useEffect(()=>{
-    const obtenerinfo = async () =>{
-      try{
-        const db = firebase.firestore()
-        const data = await db.collection('Libros').get()
-        const arrayDatos= data.docs.map(item =>(
-            {
-              id: item.id, ... item.data()
-            }
 
-        ))
-        setListaslibros(arrayDatos)
-      }catch(error){
-        console.log(error)
-      }
-    }
-
-    obtenerinfo();
-  }
-  )
-
-
-  const guardarDatos = async (e) =>{
+  const guardarDatos = (e) =>{
       e.preventDefault()
       if(!Titulo.trim()){
         setError('Digite el Titulo')
@@ -69,22 +48,11 @@ const Desarrollo = () => {
 
       }
 
-      try{
 
-        const db = firebase.firestore()
-      const nuevoLibro = {
-        nomTitulo: Titulo, 
-        nomAutor: Autor, 
-        nomEditorial: Editorial, 
-        nomEdicion: Edicion, 
-        nomISBN: ISBN, 
-        nomFecha: Fechapubli
-
-      }
-
-      const info = await db.collection('Libros').add(nuevoLibro)
-
-
+      setListaslibros([
+        ... Listaslibros,
+        {id: nanoid(), nomTitulo: Titulo, nomAutor: Autor, nomEditorial: Editorial, nomEdicion: Edicion, nomISBN: ISBN, nomFecha: Fechapubli}
+      ])
 
       e.target.reset()
       setTitulo('')
@@ -95,14 +63,7 @@ const Desarrollo = () => {
       setFechapubli('')
       setError(null)
 
-  
-    }catch(error){
-        console.log(error)
-      }
-
-    }
-
-      
+  }
 
       const editarLibros = item =>{
       setTitulo(item.nomTitulo)
@@ -115,7 +76,7 @@ const Desarrollo = () => {
       setId(item.id)
       }
 
-      const aceptarEdicion = async e =>{
+      const aceptarEdicion = e =>{
         e.preventDefault()
 
         if(!Titulo.trim()){
@@ -148,54 +109,25 @@ const Desarrollo = () => {
           return
   
         }
-
-        try{
-          const db = firebase.firestore()
-          await db.collection('Libros').doc(id).update({
-            nomTitulo: Titulo, 
-          nomAutor: Autor, 
-          nomEditorial: Editorial, 
-          nomEdicion: Edicion, 
-          nomISBN: ISBN, 
-          nomFecha: Fechapubli
-
-          }
-
-          )
-          const arrayEditado = Listaslibros.map(
-            item => item.id === id ? {id:id, nomTitulo: Titulo, nomAutor: Autor, nomEditorial: Editorial, nomEdicion: Edicion, nomISBN: ISBN, nomFecha: Fechapubli}: item
-              )
-              setListaslibros(arrayEditado)
-              setTitulo('')
-              setAutor('')  
-              setEditorial('')
-              setEdicion('')
-              setISBN('')
-              setFechapubli('')
-              setId('')
-              setcambioNombre(false)
-              setError(null)
-        }catch(error){
-          console.log(error)
-        }
-
-
-        
+        const arrayEditado = Listaslibros.map(
+      item => item.id === id ? {id:id, nomTitulo: Titulo, nomAutor: Autor, nomEditorial: Editorial, nomEdicion: Edicion, nomISBN: ISBN, nomFecha: Fechapubli}: item
+        )
+        setListaslibros(arrayEditado)
+        setTitulo('')
+        setAutor('')
+        setEditorial('')
+        setEdicion('')
+        setISBN('')
+        setFechapubli('')
+        setId('')
+        setcambioNombre(false)
+        setError(null)
 
       }
 
-      const eliminarLibros = async id =>{
-
-        try{
-          const db = firebase.firestore()
-          await db.collection('Libros').doc(id).delete()
-          const aux = Listaslibros.filter(item => item.id !== id)
-          setListaslibros(aux)
-
-        }catch(error){
-          console.log(error)
-        }
-        
+      const eliminarLibros = id =>{
+        const aux = Listaslibros.filter(item => item.id !== id)
+        setListaslibros(aux)
       }
 
       const cancelar = () =>{
