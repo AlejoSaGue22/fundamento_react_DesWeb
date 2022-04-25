@@ -20,7 +20,7 @@ const Desarrollo = () => {
         const data = await db.collection('Libros').get()
         const arrayDatos= data.docs.map(item =>(
             {
-              id: item.id, ... item.data()
+              id:item.id, ... item.data()
             }
 
         ))
@@ -81,7 +81,7 @@ const Desarrollo = () => {
 
       }
 
-      const info = await db.collection('Libros').add(nuevoLibro)
+      await db.collection('Libros').add(nuevoLibro)
 
 
 
