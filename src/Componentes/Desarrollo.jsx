@@ -167,7 +167,7 @@ const Desarrollo = () => {
               )
               setListaslibros(arrayEditado)
               setTitulo('')
-              setAutor('')
+              setAutor('')  
               setEditorial('')
               setEdicion('')
               setISBN('')
